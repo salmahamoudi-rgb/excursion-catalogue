@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 5000;
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/excursions', require('./routes/excursions'));
 app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/bookings', require('./routes/bookings'));
 
 mongoose
   .connect(process.env.MONGO_URI)

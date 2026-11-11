@@ -5,6 +5,7 @@ const excursionSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     destination: { type: String, required: true, trim: true },
     price: { type: Number, required: true, min: 0 },
+    date: { type: Date, required: true },
     description: { type: String, default: '' },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   },

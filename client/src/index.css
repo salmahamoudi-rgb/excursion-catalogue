@@ -124,3 +124,10 @@ button.danger { background: #b3261e; }
 }
 .footer section { max-width: 380px; }
 .review-delete { margin-left: 0.5rem; padding: 0.1rem 0.5rem; font-size: 0.75rem; background: #b3261e; }
+.success { padding: 0.5rem 0.7rem; background: #e3f4e8; color: #1d5c33; border-radius: 8px; }
+.booking-form { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+.booking-form input { flex: 1; min-width: 0; border-color: #b9c6d4; }
+.booking-form input[type='number'] { max-width: 70px; }
+.bookings { margin-top: 2.5rem; padding: 1.25rem; background: rgba(255, 255, 255, 0.94); color: #10243b; border-radius: 14px; }
+.bookings table { width: 100%; border-collapse: collapse; }
+.bookings th, .bookings td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #d9e1ea; }

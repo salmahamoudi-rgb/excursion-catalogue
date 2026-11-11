@@ -4,10 +4,12 @@ import Navbar from './components/Navbar';
 import AuthForm from './components/AuthForm';
 import ExcursionForm from './components/ExcursionForm';
 import ExcursionCard from './components/ExcursionCard';
+import BookingList from './components/BookingList';
 
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [excursions, setExcursions] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [authMode, setAuthMode] = useState('login');
@@ -28,6 +30,20 @@ function App() {
     loadExcursions();
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+
+    async function loadBookings() {
+      try {
+        const response = await api.get('/bookings');
+        setBookings(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadBookings();
+  }, [user]);
+
   function handleLogin(data) {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
@@ -38,10 +54,15 @@ function App() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setBookings([]);
   }
 
   function handleAdd(newExcursion) {
     setExcursions([newExcursion, ...excursions]);
+  }
+
+  function handleBooked(newBooking) {
+    setBookings([newBooking, ...bookings]);
   }
 
   async function handleDelete(id) {
@@ -52,6 +73,8 @@ function App() {
       setError(err.response?.data?.message || 'Could not delete the excursion');
     }
   }
+
+  const isAdmin = user && user.role === 'admin';
 
   return (
     <div className="app">
@@ -76,7 +99,7 @@ function App() {
           </section>
         )}
 
-        {user && user.role === 'admin' && <ExcursionForm onAdd={handleAdd} />}
+        {isAdmin && <ExcursionForm onAdd={handleAdd} />}
 
         {loading && <p className="light">Loading...</p>}
 
@@ -89,15 +112,18 @@ function App() {
               excursion={excursion}
               user={user}
               onDelete={handleDelete}
+              onBooked={handleBooked}
             />
           ))}
         </div>
+
+        {user && <BookingList bookings={bookings} isAdmin={isAdmin} />}
       </main>
 
       <footer className="footer">
         <section id="about">
           <h3>About</h3>
-          <p>Excursion Catalogue presents the excursions of a travel agency in Tunisia. Visitors can browse them; members can share reviews.</p>
+          <p>Excursion Catalogue presents the excursions of a travel agency in Tunisia. Visitors can browse them; members can book and share reviews.</p>
         </section>
         <section id="contact">
           <h3>Contact</h3>

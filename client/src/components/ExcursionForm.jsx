@@ -1,75 +1,45 @@
 import { useState } from 'react';
 import api from '../api';
 
-function ExcursionForm({ onAdd }) {
-  const [title, setTitle] = useState('');
-  const [destination, setDestination] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
+function BookingForm({ excursionId, onBooked }) {
+  const [people, setPeople] = useState(1);
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   async function handleSubmit(event) {
     event.preventDefault();
     setError('');
+    setMessage('');
 
     try {
-      const response = await api.post('/excursions', {
-        title,
-        destination,
-        price: Number(price),
-        description,
+      const response = await api.post('/bookings', {
+        excursionId,
+        people: Number(people),
       });
 
-      onAdd(response.data);
-      setTitle('');
-      setDestination('');
-      setPrice('');
-      setDescription('');
+      onBooked(response.data);
+      setMessage('Booking confirmed');
+      setPeople(1);
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not add the excursion');
+      setError(err.response?.data?.message || 'Could not book the excursion');
     }
   }
 
   return (
-    <section className="panel">
-      <form onSubmit={handleSubmit} className="form">
-        <h2>Add an excursion</h2>
+    <form onSubmit={handleSubmit} className="booking-form">
+      {error && <p className="error">{error}</p>}
+      {message && <p className="success">{message}</p>}
 
-        {error && <p className="error">{error}</p>}
-
-        <input
-          type="text"
-          placeholder="Title (e.g. Sahara sunset tour)"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Destination (e.g. Douz)"
-          value={destination}
-          onChange={(event) => setDestination(event.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Price per person (TND)"
-          min="0"
-          value={price}
-          onChange={(event) => setPrice(event.target.value)}
-          required
-        />
-        <textarea
-          placeholder="Description"
-          rows="3"
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-        />
-
-        <button type="submit">Add excursion</button>
-      </form>
-    </section>
+      <input
+        type="number"
+        min="1"
+        value={people}
+        onChange={(event) => setPeople(event.target.value)}
+        required
+      />
+      <button type="submit">Book</button>
+    </form>
   );
 }
 
-export default ExcursionForm;
+export default BookingForm;

@@ -19,16 +19,17 @@ router.get('/', async (req, res) => {
 
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
-    const { title, destination, price, description } = req.body;
+    const { title, destination, price, date, description } = req.body;
 
-    if (!title || !destination || price === undefined || price === '') {
-      return res.status(400).json({ message: 'Title, destination and price are required' });
+    if (!title || !destination || !date || price === undefined || price === '') {
+      return res.status(400).json({ message: 'Title, destination, price and date are required' });
     }
 
     const excursion = await Excursion.create({
       title,
       destination,
       price,
+      date,
       description,
       createdBy: req.user.id,
     });
