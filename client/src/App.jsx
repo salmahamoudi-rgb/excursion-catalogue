@@ -61,8 +61,12 @@ function App() {
     setExcursions([newExcursion, ...excursions]);
   }
 
-  function handleBooked(newBooking) {
-    setBookings([newBooking, ...bookings]);
+  function handleUpdated(updatedExcursion) {
+    setExcursions(
+      excursions.map((excursion) =>
+        excursion._id === updatedExcursion._id ? updatedExcursion : excursion
+      )
+    );
   }
 
   async function handleDelete(id) {
@@ -71,6 +75,19 @@ function App() {
       setExcursions(excursions.filter((excursion) => excursion._id !== id));
     } catch (err) {
       setError(err.response?.data?.message || 'Could not delete the excursion');
+    }
+  }
+
+  function handleBooked(newBooking) {
+    setBookings([newBooking, ...bookings]);
+  }
+
+  async function handleCancel(id) {
+    try {
+      await api.delete(`/bookings/${id}`);
+      setBookings(bookings.filter((booking) => booking._id !== id));
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not cancel the booking');
     }
   }
 
@@ -113,11 +130,14 @@ function App() {
               user={user}
               onDelete={handleDelete}
               onBooked={handleBooked}
+              onUpdated={handleUpdated}
             />
           ))}
         </div>
 
-        {user && <BookingList bookings={bookings} isAdmin={isAdmin} />}
+        {user && (
+          <BookingList bookings={bookings} isAdmin={isAdmin} onCancel={handleCancel} />
+        )}
       </main>
 
       <footer className="footer">

@@ -1,45 +1,84 @@
 import { useState } from 'react';
 import api from '../api';
 
-function BookingForm({ excursionId, onBooked }) {
-  const [people, setPeople] = useState(1);
-  const [message, setMessage] = useState('');
+function ExcursionForm({ onAdd }) {
+  const [title, setTitle] = useState('');
+  const [destination, setDestination] = useState('');
+  const [price, setPrice] = useState('');
+  const [date, setDate] = useState('');
+  const [description, setDescription] = useState('');
   const [error, setError] = useState('');
 
   async function handleSubmit(event) {
     event.preventDefault();
     setError('');
-    setMessage('');
 
     try {
-      const response = await api.post('/bookings', {
-        excursionId,
-        people: Number(people),
+      const response = await api.post('/excursions', {
+        title,
+        destination,
+        price: Number(price),
+        date,
+        description,
       });
 
-      onBooked(response.data);
-      setMessage('Booking confirmed');
-      setPeople(1);
+      onAdd(response.data);
+      setTitle('');
+      setDestination('');
+      setPrice('');
+      setDate('');
+      setDescription('');
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not book the excursion');
+      setError(err.response?.data?.message || 'Could not add the excursion');
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="booking-form">
-      {error && <p className="error">{error}</p>}
-      {message && <p className="success">{message}</p>}
+    <section className="panel">
+      <form onSubmit={handleSubmit} className="form">
+        <h2>Add an excursion</h2>
 
-      <input
-        type="number"
-        min="1"
-        value={people}
-        onChange={(event) => setPeople(event.target.value)}
-        required
-      />
-      <button type="submit">Book</button>
-    </form>
+        {error && <p className="error">{error}</p>}
+
+        <input
+          type="text"
+          placeholder="Title (e.g. Sahara sunset tour)"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Destination (e.g. Douz)"
+          value={destination}
+          onChange={(event) => setDestination(event.target.value)}
+          required
+        />
+        <input
+          type="number"
+          placeholder="Price per person (TND)"
+          min="0"
+          value={price}
+          onChange={(event) => setPrice(event.target.value)}
+          required
+        />
+        <input
+          type="date"
+          value={date}
+          onChange={(event) => setDate(event.target.value)}
+          required
+        />
+        <textarea
+          placeholder="Description"
+          rows="3"
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+        />
+
+        <button type="submit">Add excursion</button>
+      </form>
+    </section>
   );
 }
 
-export default BookingForm;
+export default ExcursionForm;

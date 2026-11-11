@@ -1,4 +1,4 @@
-function BookingList({ bookings, isAdmin }) {
+function BookingList({ bookings, isAdmin, onCancel }) {
   return (
     <section className="bookings">
       <h2>{isAdmin ? 'All bookings' : 'My bookings'}</h2>
@@ -14,6 +14,7 @@ function BookingList({ bookings, isAdmin }) {
               <th>People</th>
               <th>Total</th>
               {isAdmin && <th>Client</th>}
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -28,6 +29,11 @@ function BookingList({ bookings, isAdmin }) {
                 <td>{booking.people}</td>
                 <td>{booking.excursion ? booking.excursion.price * booking.people : 0} TND</td>
                 {isAdmin && <td>{booking.user ? booking.user.name : 'unknown'}</td>}
+                <td>
+                  <button className="review-delete" onClick={() => onCancel(booking._id)}>
+                    Cancel
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

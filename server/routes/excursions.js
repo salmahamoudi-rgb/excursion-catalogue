@@ -41,6 +41,26 @@ router.post('/', protect, adminOnly, async (req, res) => {
   }
 });
 
+router.put('/:id', protect, adminOnly, async (req, res) => {
+  try {
+    const { title, destination, price, date, description } = req.body;
+
+    const excursion = await Excursion.findByIdAndUpdate(
+      req.params.id,
+      { title, destination, price, date, description },
+      { returnDocument: 'after', runValidators: true }
+    ).populate('createdBy', 'name');
+
+    if (!excursion) {
+      return res.status(404).json({ message: 'Excursion not found' });
+    }
+
+    res.json(excursion);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 router.delete('/:id', protect, adminOnly, async (req, res) => {
   try {
     const excursion = await Excursion.findById(req.params.id);
